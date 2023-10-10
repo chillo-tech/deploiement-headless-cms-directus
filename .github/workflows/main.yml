@@ -79,6 +79,6 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            sudo docker networks create ${{ fromJson(env.PROJECT_DESCRIPTION).key }}
+            sudo docker network create ${{ fromJson(env.PROJECT_DESCRIPTION).key }}
             sudo docker volume create ${{ fromJson(env.PROJECT_DESCRIPTION).key }}
             sudo docker-compose -f /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).key }}/docker-compose.yaml up -d
