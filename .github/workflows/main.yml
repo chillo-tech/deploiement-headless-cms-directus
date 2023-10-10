@@ -23,11 +23,7 @@ jobs:
       - name: 'read file'
         id: read-file
         run: |
-          content=$(cat ./project-template.json)
-          content="${content//'%'/'%25'}"
-          content="${content//$'\n'/'%0A'}"
-          content="${content//$'\r'/'%0D'}"
-          echo "PROJECT_DESCRIPTION=$content >> $GITHUB_OUTPUT
+          echo "PROJECT_DESCRIPTION=$(jq -c . < project-template.json)" >> >> $GITHUB_OUTPUT
       - name: 'File name'
         env:
           PROJECT_DESCRIPTION: ${{ steps.read-file.outputs.PROJECT_DESCRIPTION }}
