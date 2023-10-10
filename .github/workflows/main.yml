@@ -50,7 +50,7 @@ jobs:
         env:
           PROJECT_DESCRIPTION: ${{ needs.create-remote-folder.outputs.PROJECT_DESCRIPTION }}
         run: |
-          sed -i 's|NOM_APPLICATION|${{ fromJson(env.PROJECT_DESCRIPTION).key }}|' docker-compose.yml
+          sed -i 's|NOM_APPLICATION|${{ fromJson(env.PROJECT_DESCRIPTION).key }}|' docker-compose.yaml
 
       - name: copy docker compose to remote server
         env:
