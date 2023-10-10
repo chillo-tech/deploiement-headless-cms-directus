@@ -19,7 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - run: |
-          ls -al
+          content=`cat ./project.json`
       - name: 'read file'
         id: read-file
         run: |
