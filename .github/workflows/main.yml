@@ -17,8 +17,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - run: |
-          cat ./project-template.json
       - name: 'read file'
         id: read-file
         run: |
@@ -27,7 +25,7 @@ jobs:
         env:
           PROJECT_DESCRIPTION: ${{ steps.read-file.outputs.PROJECT_DESCRIPTION }}
         run: |
-          echo '${{ fromJson(env.PROJECT_DESCRIPTION).name }}'
+          echo '${{ fromJson(env.PROJECT_DESCRIPTION).key }}'
 
       - name: create folder on remote vm
         uses: appleboy/ssh-action@v1.0.0
@@ -39,8 +37,8 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            sudo mkdir -p /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).name }}
-            sudo chmod ugo+rwx /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).name }}
+            sudo mkdir -p /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).key }}
+            sudo chmod ugo+rwx /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).key }}
 
   copy-configs-on-remote-vm:
     name: copy-configs-on-remote-vm
@@ -48,7 +46,13 @@ jobs:
     needs: create-remote-folder
     steps:
       - uses: actions/checkout@v3
-      - name: copy file via ssh password
+      - name: set docker compose variables on remote server
+        env:
+          PROJECT_DESCRIPTION: ${{ needs.create-remote-folder.outputs.PROJECT_DESCRIPTION }}
+        run: |
+          sed -i 's|NOM_APPLICATION|${{ fromJson(env.PROJECT_DESCRIPTION).key }}|' docker-compose.yml
+
+      - name: copy docker compose to remote server
         env:
           PROJECT_DESCRIPTION: ${{ needs.create-remote-folder.outputs.PROJECT_DESCRIPTION }}
         uses: appleboy/scp-action@v0.1.4
@@ -58,7 +62,8 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           source: 'docker-compose.yaml'
-          target: /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).name }}
+          target: /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).key }}
+
   run-CMS:
     name: run-CMS
     runs-on: ubuntu-latest
@@ -73,4 +78,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
-          script: sudo docker-compose -f /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).name }}/docker-compose.yaml up -d
+          script: |
+            sudo docker networks create ${{ fromJson(env.PROJECT_DESCRIPTION).key }}
+            sudo docker volume create ${{ fromJson(env.PROJECT_DESCRIPTION).key }}
+            sudo docker-compose -f /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).key }}/docker-compose.yaml up -d

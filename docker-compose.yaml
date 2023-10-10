@@ -1,43 +1,46 @@
-version: "3"
+version: '3'
 
-networks:
-  #${{fromJson(PROJECT_NAME)}}:
-  directus:
 services:
-  data_base_server:
-    #name: Create data base server
+  NOM_APPLICATION-db:
+    container_name: 'NOM_APPLICATION_db'
     image: mysql:5.7
     environment:
-      MYSQL_DATABASE: "directus"
-      MYSQL_USER: "directus"
-      MYSQL_PASSWORD: "directus"
-      MYSQL_ROOT_PASSWORD: "directus"
+      MYSQL_DATABASE: 'NOM_APPLICATION'
+      MYSQL_USER: 'NOM_APPLICATION-user'
+      MYSQL_PASSWORD: 'NOM_APPLICATION-pwd'
+      MYSQL_ROOT_PASSWORD: 'NOM_APPLICATION-rpwd'
     ports:
-      - "3001:3306"
+      - '3001:3306'
     networks:
-      #- ${{fromJson(PROJECT_NAME)}}
-      - directus
+      - NOM_APPLICATION
 
-  CMS:
-    #name: create_CMS
+  NOM_APPLICATION-ihm:
+    container_name: NOM_APPLICATION_ihm
     image: directus/directus:v8-apache
     ports:
-      - "3000:80"
+      - '3000:80'
     environment:
-      DIRECTUS_APP_ENV: "production"
-      DIRECTUS_AUTH_PUBLICKEY: "C69B8E7C437A4E6E16B7A35ACF2C3"
-      DIRECTUS_AUTH_SECRETKEY: "8F14A3DB43B93AE97AB3C6151FE76"
-      DIRECTUS_DATABASE_HOST: "mysql"
-      DIRECTUS_DATABASE_PORT: "3306"
-      DIRECTUS_DATABASE_NAME: "directus"
-      DIRECTUS_DATABASE_USERNAME: "directus"
-      DIREeCTUS_DATABASE_PASSWORD: "directus"
+      DIRECTUS_APP_ENV: 'production'
+      DIRECTUS_AUTH_PUBLICKEY: 'NOM_APPLICATION_ihmC69B8E7C437A4E6E16B7A35ACF2C3'
+      DIRECTUS_AUTH_SECRETKEY: 'NOM_APPLICATION_ihm'
+      DIRECTUS_DATABASE_HOST: 'NOM_APPLICATION_db'
+      DIRECTUS_DATABASE_PORT: '3306'
+      DIRECTUS_DATABASE_NAME: 'NOM_APPLICATION'
+      DIRECTUS_DATABASE_USERNAME: 'NOM_APPLICATION'
+      DIRECTUS_DATABASE_PASSWORD: 'NOM_APPLICATION-pwd'
 
-      ADMIN_EMAIL: "kkayefekoua93@gmail.com"
-      ADMIN_PASSWORD: "d1r3ctu5"
+      ADMIN_EMAIL: 'kkayefekoua93@gmail.com'
+      ADMIN_PASSWORD: 'd1r3ctu5'
     volumes:
-      - ./data/config:/var/directus/config
-      - ./data/uploads:/var/directus/public/uploads    
+      - NOM_APPLICATION/configs:/var/directus/config
+      - NOM_APPLICATION/uploads:/var/directus/public/uploads
     networks:
-      #- ${{fromJson(PROJECT_NAME)}}
-      - directus
+      - NOM_APPLICATION
+
+networks:
+  NOM_APPLICATION:
+    name: NOM_APPLICATION
+    external: true
+
+volumes:
+  NOM_APPLICATION:
