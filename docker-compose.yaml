@@ -39,7 +39,7 @@ services:
 
 networks:
   NOM_APPLICATION:
-    name: NOM_APPLICATION
+    #name: NOM_APPLICATION
     external: true
 
 volumes:
