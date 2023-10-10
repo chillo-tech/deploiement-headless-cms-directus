@@ -23,9 +23,9 @@ jobs:
       - name: 'read file'
         id: read-file
         run: |
-          echo 'project<<EOF' >> $GITHUB_OUTPUT
+          echo "PROJECT_DESCRIPTION<<EOF" >> $GITHUB_OUTPUT
           cat ./project.json >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
       - name: 'File name'
         env:
           PROJECT_DESCRIPTION: ${{ steps.read-file.outputs.PROJECT_DESCRIPTION }}
