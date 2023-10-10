@@ -23,7 +23,7 @@ jobs:
       - name: 'read file'
         id: read-file
         run: |
-          JSON=$(cat ./your.json)
+          JSON=$(cat ./project.json)
           echo "PROJECT_DESCRIPTION=${JSON//'%'/'%25'} >> $GITHUB_OUTPUT
       - name: 'File name'
         env:
