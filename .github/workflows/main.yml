@@ -1,5 +1,4 @@
-name: Directus
-
+name: Deploiement headless cms directus
 on:
   push:
     branches:
