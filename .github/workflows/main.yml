@@ -16,6 +16,8 @@ jobs:
     outputs:
       PROJECT_DESCRIPTION: ${{ steps.read-file.outputs.PROJECT_DESCRIPTION }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: 'read file'
         id: read-file
         run: |
