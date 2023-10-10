@@ -24,7 +24,7 @@ jobs:
         id: read-file
         run: |
           JSON=$(cat ./your.json)
-          echo "PROJECT_DESCRIPTION:${JSON//'%'/'%25'} >> $GITHUB_OUTPUT
+          echo "PROJECT_DESCRIPTION=${JSON//'%'/'%25'} >> $GITHUB_OUTPUT
       - name: 'File name'
         env:
           PROJECT_DESCRIPTION: ${{ steps.read-file.outputs.PROJECT_DESCRIPTION }}
