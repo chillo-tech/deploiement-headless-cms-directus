@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - run: |
+          ls -al
       - name: 'read file'
         id: read-file
         run: |
