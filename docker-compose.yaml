@@ -43,5 +43,4 @@ networks:
     external: true
 
 volumes:
-  - configs:
-  - uploads:
+  - NOM_APPLICATION
