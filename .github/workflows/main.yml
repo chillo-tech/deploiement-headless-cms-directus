@@ -19,11 +19,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - run: |
-          content=`cat ./project.json`
+          cat ./project-tempate.json
       - name: 'read file'
         id: read-file
         run: |
-          content=`cat ./project.json`
+          content=${cat ./project.json}
           content="${content//'%'/'%25'}"
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
