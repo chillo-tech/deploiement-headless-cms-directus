@@ -10,7 +10,7 @@ services:
       MYSQL_PASSWORD: 'NOM_APPLICATION-pwd'
       MYSQL_ROOT_PASSWORD: 'NOM_APPLICATION-rpwd'
     ports:
-      - '3001:3306'
+      - '3030:3306'
     networks:
       - NOM_APPLICATION
 
@@ -18,7 +18,7 @@ services:
     container_name: NOM_APPLICATION_ihm
     image: directus/directus:v8-apache
     ports:
-      - '3000:80'
+      - '3080:80'
     environment:
       DIRECTUS_APP_ENV: 'production'
       DIRECTUS_AUTH_PUBLICKEY: 'NOM_APPLICATION_ihmC69B8E7C437A4E6E16B7A35ACF2C3'
