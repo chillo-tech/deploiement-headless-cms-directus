@@ -37,10 +37,10 @@ services:
     networks:
       - NOM_APPLICATION
 
-  networks:
-    NOM_APPLICATION:
-    #name: NOM_APPLICATION
-      external: true
+networks:
+  NOM_APPLICATION:
+  #name: NOM_APPLICATION
+    external: true
 
-  volumes:
-    NOM_APPLICATION:
+volumes:
+  NOM_APPLICATION:
