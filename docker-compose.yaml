@@ -1,6 +1,8 @@
 version: '3'
 
 services:
+volumes:
+  NOM_APPLICATION:
   NOM_APPLICATION-db:
     container_name: 'NOM_APPLICATION_db'
     image: mysql:5.7
@@ -32,8 +34,8 @@ services:
       ADMIN_EMAIL: 'kkayefekoua93@gmail.com'
       ADMIN_PASSWORD: 'd1r3ctu5'
     volumes:
-      - NOM_APPLICATION-configs:/var/directus/config
-      - NOM_APPLICATION-uploads:/var/directus/public/uploads
+      - NOM_APPLICATION/configs:/var/directus/config
+      - NOM_APPLICATION/uploads:/var/directus/public/uploads
     networks:
       - NOM_APPLICATION
 
@@ -42,7 +44,3 @@ networks:
   #name: NOM_APPLICATION
     external: true
 
-volumes:
-  #NOM_APPLICATION:
-  -NOM_APPLICATION-configs:
-  -NOM_APPLICATION-uploads:
