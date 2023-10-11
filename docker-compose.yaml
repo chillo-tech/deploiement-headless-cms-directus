@@ -1,8 +1,6 @@
 version: '3'
 
 services:
-volumes:
-  NOM_APPLICATION:
   NOM_APPLICATION-db:
     container_name: 'NOM_APPLICATION_db'
     image: mysql:5.7
@@ -44,3 +42,5 @@ networks:
   #name: NOM_APPLICATION
     external: true
 
+volumes:
+  NOM_APPLICATION
