@@ -2,59 +2,58 @@ name: Deploiement headless cms directus
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - feature/*
   workflow_dispatch:
 
 jobs:
-  create-remote-folder:
-    name: remote access
+  read-projects:
+    name: Read projects
     runs-on: ubuntu-latest
     outputs:
-      PROJECT_DESCRIPTION: ${{ steps.read-file.outputs.PROJECT_DESCRIPTION }}
+      projects: ${{ steps.read-file.outputs.projects }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: 'read file'
         id: read-file
         run: |
-          echo "PROJECT_DESCRIPTION=$(jq -c . < project-template.json)" >> $GITHUB_OUTPUT
-      - name: 'File name'
-        env:
-          PROJECT_DESCRIPTION: ${{ steps.read-file.outputs.PROJECT_DESCRIPTION }}
-        run: |
-          echo '${{ fromJson(env.PROJECT_DESCRIPTION).key }}'
+          echo "projects=$(jq -c . < project-template.json)" >> $GITHUB_OUTPUT
 
+  create-folder-on-remote-vm:
+    runs-on: ubuntu-latest
+    needs: read-projects
+    strategy:
+      matrix:
+        projects: ${{fromJson(needs.read-projects.outputs.projects)}}
+    steps:
+      - name: key
+        run: echo "Hello ${{ toJSON(matrix) }}"
       - name: create folder on remote vm
         uses: appleboy/ssh-action@v1.0.0
-        env:
-          PROJECT_DESCRIPTION: ${{ steps.read-file.outputs.PROJECT_DESCRIPTION }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            sudo mkdir -p /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).key }}
-            sudo chmod ugo+rwx /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).key }}
+            sudo mkdir -p /opt/applications/${{ matrix.projects.key }}
+            sudo chmod ugo+rwx /opt/applications/${{ matrix.projects.key }}
 
   copy-configs-on-remote-vm:
     name: copy-configs-on-remote-vm
     runs-on: ubuntu-latest
-    needs: create-remote-folder
+    needs: [read-projects, create-folder-on-remote-vm]
+    strategy:
+      matrix:
+        projects: ${{fromJson(needs.read-projects.outputs.projects)}}
     steps:
       - uses: actions/checkout@v3
       - name: set docker compose variables on remote server
-        env:
-          PROJECT_DESCRIPTION: ${{ needs.create-remote-folder.outputs.PROJECT_DESCRIPTION }}
         run: |
-          sed -i 's|NOM_APPLICATION|${{ fromJson(env.PROJECT_DESCRIPTION).key }}|' docker-compose.yaml
+          sed -i 's|NOM_APPLICATION|${{ matrix.projects.key }}|' docker-compose.yaml
+          sed -i 's|PORT_APPLICATION|${{ matrix.projects.port }}|' docker-compose.yaml
 
       - name: copy docker compose to remote server
-        env:
-          PROJECT_DESCRIPTION: ${{ needs.create-remote-folder.outputs.PROJECT_DESCRIPTION }}
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.HOST }}
@@ -62,16 +61,17 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           source: 'docker-compose.yaml'
-          target: /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).key }}
+          target: /opt/applications/${{ matrix.projects.key }}
 
-  run-CMS:
-    name: run-CMS
+  run-cms-onremote-vm:
+    name: run-cms-onremote-vm
     runs-on: ubuntu-latest
-    needs: [copy-configs-on-remote-vm, create-remote-folder]
+    needs: [read-projects, copy-configs-on-remote-vm, read-projects]
+    strategy:
+      matrix:
+        projects: ${{fromJson(needs.read-projects.outputs.projects)}}
     steps:
       - name: run-CMS
-        env:
-          PROJECT_DESCRIPTION: ${{ needs.create-remote-folder.outputs.PROJECT_DESCRIPTION }}
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
@@ -79,6 +79,9 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            sudo docker network create ${{ fromJson(env.PROJECT_DESCRIPTION).key }}
-            sudo docker volume create ${{ fromJson(env.PROJECT_DESCRIPTION).key }}
-            sudo docker-compose -f /opt/applications/${{ fromJson(env.PROJECT_DESCRIPTION).key }}/docker-compose.yaml up -d
+
+            sudo docker network create ${{ matrix.projects.key }} || true
+            sudo docker volume create ${{ matrix.projects.key }} || true
+            sudo docker compose -f /opt/applications/${{ matrix.projects.key }}/docker-compose.yaml stop
+            sudo docker compose -f /opt/applications/${{ matrix.projects.key }}/docker-compose.yaml rm -f
+            sudo docker compose -f /opt/applications/${{ matrix.projects.key }}/docker-compose.yaml up -d

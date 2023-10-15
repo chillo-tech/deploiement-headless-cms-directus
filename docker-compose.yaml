@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   NOM_APPLICATION-db:
     container_name: 'NOM_APPLICATION_db'
@@ -9,8 +7,6 @@ services:
       MYSQL_USER: 'NOM_APPLICATION-user'
       MYSQL_PASSWORD: 'NOM_APPLICATION-pwd'
       MYSQL_ROOT_PASSWORD: 'NOM_APPLICATION-rpwd'
-    ports:
-      - '3030:3306'
     networks:
       - NOM_APPLICATION
 
@@ -18,7 +14,7 @@ services:
     container_name: NOM_APPLICATION_ihm
     image: directus/directus:v8-apache
     ports:
-      - '3080:80'
+      - 'PORT_APPLICATION:80'
     environment:
       DIRECTUS_APP_ENV: 'production'
       DIRECTUS_AUTH_PUBLICKEY: 'NOM_APPLICATION_ihmC69B8E7C437A4E6E16B7A35ACF2C3'
@@ -29,17 +25,17 @@ services:
       DIRECTUS_DATABASE_USERNAME: 'NOM_APPLICATION'
       DIRECTUS_DATABASE_PASSWORD: 'NOM_APPLICATION-pwd'
 
-      ADMIN_EMAIL: 'kkayefekoua93@gmail.com'
-      ADMIN_PASSWORD: 'd1r3ctu5'
+      ADMIN_EMAIL: 'no-reply@NOM_APPLICATION.com'
+      ADMIN_PASSWORD: 'NOM_APPLICATION'
     volumes:
-      - NOM_APPLICATION-configs:/var/directus/config
-      - NOM_APPLICATION-uploads:/var/directus/public/uploads
+      - NOM_APPLICATION/configs:/var/directus/config
+      - NOM_APPLICATION/uploads:/var/directus/public/uploads
     networks:
       - NOM_APPLICATION
 
 networks:
   NOM_APPLICATION:
-  #name: NOM_APPLICATION
+    name: NOM_APPLICATION
     external: true
 
 volumes:
