@@ -10,7 +10,7 @@ services:
       MYSQL_PASSWORD: 'NOM_APPLICATION-pwd'
       MYSQL_ROOT_PASSWORD: 'NOM_APPLICATION-rpwd'
     ports:
-      - 3308:3306
+      - 3301:3306
     networks:
       - NOM_APPLICATION     
   NOM_APPLICATION-ihm:
