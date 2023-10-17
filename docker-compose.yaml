@@ -13,7 +13,6 @@ services:
       - 3308:3306
     networks:
       - NOM_APPLICATION
-
   NOM_APPLICATION-ihm:
     container_name: NOM_APPLICATION_ihm
     image: directus/directus:v8-apache
