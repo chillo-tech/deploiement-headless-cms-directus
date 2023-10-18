@@ -9,8 +9,8 @@ services:
       MYSQL_USER: 'NOM_APPLICATION-user'
       MYSQL_PASSWORD: 'NOM_APPLICATION-pwd'
       MYSQL_ROOT_PASSWORD: 'NOM_APPLICATION-rpwd'
-    ports:
-      - 3307:3306
+    #ports:
+    #  - 3307:3306
     networks:
       - NOM_APPLICATION
 
