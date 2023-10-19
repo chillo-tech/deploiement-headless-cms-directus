@@ -27,7 +27,7 @@ jobs:
         projects: ${{fromJson(needs.read-projects.outputs.projects)}}
         exclude:
           - projects:
-            deployed: true
+              deployed: true
     steps:
       - name: create folder on remote vm
         uses: appleboy/ssh-action@v1.0.0
@@ -49,7 +49,7 @@ jobs:
         projects: ${{fromJson(needs.read-projects.outputs.projects)}}
         exclude:
           - projects:
-            deployed: true
+              deployed: true
     steps:
       - uses: actions/checkout@v3
       - name: set docker compose variables on remote server
@@ -78,7 +78,7 @@ jobs:
         projects: ${{fromJson(needs.read-projects.outputs.projects)}}
         exclude:
           - projects:
-            deployed: true
+              deployed: true
     steps:
       - name: run-CMS
         uses: appleboy/ssh-action@v1.0.0
