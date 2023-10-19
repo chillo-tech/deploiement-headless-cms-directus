@@ -81,7 +81,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
 
-            sudo docker network create ${{ matrix.projects.key }} || true
+            sudo docker network create ${{ matrix.projects.key }}-network || true
             sudo docker volume create ${{ matrix.projects.key }}-database || true
             sudo docker volume create ${{ matrix.projects.key }}-backoffice || true
             sudo docker volume create ${{ matrix.projects.key }}-backoffice-config || true
