@@ -25,9 +25,10 @@ jobs:
     strategy:
       matrix:
         projects: ${{fromJson(needs.read-projects.outputs.projects)}}
+        exclude:
+          - projects:
+            deployed: true
     steps:
-      - name: key
-        run: echo "Hello ${{ toJSON(matrix) }}"
       - name: create folder on remote vm
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -46,6 +47,9 @@ jobs:
     strategy:
       matrix:
         projects: ${{fromJson(needs.read-projects.outputs.projects)}}
+        exclude:
+          - projects:
+            deployed: true
     steps:
       - uses: actions/checkout@v3
       - name: set docker compose variables on remote server
@@ -72,6 +76,9 @@ jobs:
     strategy:
       matrix:
         projects: ${{fromJson(needs.read-projects.outputs.projects)}}
+        exclude:
+          - projects:
+            deployed: true
     steps:
       - name: run-CMS
         uses: appleboy/ssh-action@v1.0.0

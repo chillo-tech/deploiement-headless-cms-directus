@@ -5,7 +5,7 @@
     "port": 8001,
     "portDbIhm": 5001,
     "portDb": 9001,
-    "deployed": false
+    "deployed": true
   },
   {
     "name": "project-test",
@@ -13,6 +13,14 @@
     "port": 8002,
     "portDbIhm": 9002,
     "portDb": 5002,
+    "deployed": true
+  },
+  {
+    "name": "contacts-chillo",
+    "key": "contacts-chillo",
+    "port": 8003,
+    "portDbIhm": 9003,
+    "portDb": 5003,
     "deployed": false
   }
 ]
