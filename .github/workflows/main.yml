@@ -52,6 +52,7 @@ jobs:
         run: |
           sed -i 's|NOM_APPLICATION|${{ matrix.projects.key }}|' docker-compose.yaml
           sed -i 's|PORT_APPLICATION|${{ matrix.projects.port }}|' docker-compose.yaml
+          sed -i 's|PORT_DB_APPLICATION|${{ matrix.projects.portDb }}|' docker-compose.yaml
 
       - name: copy docker compose to remote server
         uses: appleboy/scp-action@v0.1.4
