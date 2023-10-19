@@ -26,11 +26,9 @@ jobs:
       matrix:
         projects: ${{fromJson(needs.read-projects.outputs.projects)}}
         exclude:
-        - projects: 
+        - projects:
             deployed: true
     steps:
-      - name: key
-        run: echo "Hello ${{ toJSON(matrix) }}"
       - name: create folder on remote vm
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -50,7 +48,7 @@ jobs:
       matrix:
         projects: ${{fromJson(needs.read-projects.outputs.projects)}}
         exclude:
-        - projects: 
+        - projects:
             deployed: true
     steps:
       - uses: actions/checkout@v3
@@ -72,7 +70,7 @@ jobs:
   run-cms-onremote-vm:
     name: run-cms-onremote-vm
     runs-on: ubuntu-latest
-    needs: [read-projects, copy-configs-on-remote-vm, read-projects]
+    needs: [read-projects, copy-configs-on-remote-vm]
     strategy:
       matrix:
         projects: ${{fromJson(needs.read-projects.outputs.projects)}}
