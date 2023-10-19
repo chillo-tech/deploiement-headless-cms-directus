@@ -7,6 +7,8 @@ services:
       - NOM_APPLICATION-database:/var/lib/postgresql/data
     networks:
       - NOM_APPLICATION-network
+    ports:
+      - PORT_DB_APPLICATION:5432
     environment:
       POSTGRES_USER: NOM_APPLICATION-user
       POSTGRES_PASSWORD: NOM_APPLICATION-pwd
@@ -16,7 +18,7 @@ services:
     image: adminer:4.8.1-standalone
     restart: always
     ports:
-      - PORT_DB_APPLICATION:8080
+      - PORT_DB_APPLICATION_IHM:8080
     networks:
       - NOM_APPLICATION-network
     depends_on:
@@ -50,6 +52,7 @@ services:
       SECRET: NOM_APPLICATION_ihm
       DB_CLIENT: pg
       DB_HOST: NOM_APPLICATION-database
+      DB_PORT: PORT_DB_APPLICATION-database
       DB_DATABASE: NOM_APPLICATION
 
       DB_USER: NOM_APPLICATION-user
