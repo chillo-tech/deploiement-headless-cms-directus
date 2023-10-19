@@ -81,7 +81,12 @@ jobs:
           script: |
 
             sudo docker network create ${{ matrix.projects.key }} || true
-            sudo docker volume create ${{ matrix.projects.key }} || true
+            sudo docker volume create ${{ matrix.projects.key }}-database || true
+            sudo docker volume create ${{ matrix.projects.key }}-backoffice || true
+            sudo docker volume create ${{ matrix.projects.key }}-backoffice-config || true
+            sudo docker volume create ${{ matrix.projects.key }}-backoffice-src || true
+            sudo docker volume create ${{ matrix.projects.key }}-backoffice-uploads || true
+            sudo docker volume create ${{ matrix.projects.key }}-backoffice-extensions || true
             sudo docker compose -f /opt/applications/${{ matrix.projects.key }}/docker-compose.yaml stop
             sudo docker compose -f /opt/applications/${{ matrix.projects.key }}/docker-compose.yaml rm -f
             sudo docker compose -f /opt/applications/${{ matrix.projects.key }}/docker-compose.yaml up -d

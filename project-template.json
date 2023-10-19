@@ -3,12 +3,14 @@
     "name": "2KF_Multiservices",
     "key": "2kf-multiservices",
     "port": 3080,
+    "portDb": 9180,
     "deployed": false
   },
   {
     "name": "project-test",
     "key": "project-test",
     "port": 3081,
+    "portDb": 9181,
     "deployed": false
   }
 ]

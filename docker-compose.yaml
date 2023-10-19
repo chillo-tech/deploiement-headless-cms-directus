@@ -1,43 +1,76 @@
 services:
-  NOM_APPLICATION-db:
-    container_name: 'NOM_APPLICATION_db'
-    image: mysql:5.7
-    environment:
-      MYSQL_DATABASE: 'NOM_APPLICATION'
-      MYSQL_USER: 'NOM_APPLICATION-user'
-      MYSQL_PASSWORD: 'NOM_APPLICATION-pwd'
-      MYSQL_ROOT_PASSWORD: 'NOM_APPLICATION-rpwd'
-    networks:
-      - NOM_APPLICATION
-
-  NOM_APPLICATION-ihm:
-    container_name: NOM_APPLICATION_ihm
-    image: directus/directus:v8-apache
-    ports:
-      - 'PORT_APPLICATION:80'
-    environment:
-      DIRECTUS_APP_ENV: 'production'
-      DIRECTUS_AUTH_PUBLICKEY: 'NOM_APPLICATION_ihmC69B8E7C437A4E6E16B7A35ACF2C3'
-      DIRECTUS_AUTH_SECRETKEY: 'NOM_APPLICATION_ihm'
-      DIRECTUS_DATABASE_HOST: 'NOM_APPLICATION_db'
-      DIRECTUS_DATABASE_PORT: '3306'
-      DIRECTUS_DATABASE_NAME: 'NOM_APPLICATION'
-      DIRECTUS_DATABASE_USERNAME: 'NOM_APPLICATION'
-      DIRECTUS_DATABASE_PASSWORD: 'NOM_APPLICATION-pwd'
-
-      ADMIN_EMAIL: 'no-reply@NOM_APPLICATION.com'
-      ADMIN_PASSWORD: 'NOM_APPLICATION'
+  NOM_APPLICATION-database:
+    container_name: NOM_APPLICATION-database
+    image: postgis/postgis:13-master
+    restart: always
     volumes:
-      - NOM_APPLICATION/configs:/var/directus/config
-      - NOM_APPLICATION/uploads:/var/directus/public/uploads
+      - NOM_APPLICATION-database:/var/lib/postgresql/data
     networks:
-      - NOM_APPLICATION
+      - NOM_APPLICATION-network
+    environment:
+      POSTGRES_USER: NOM_APPLICATION-user
+      POSTGRES_PASSWORD: NOM_APPLICATION-pwd
+      POSTGRES_DB: NOM_APPLICATION
+  NOM_APPLICATION-database-ihm:
+    container_name: NOM_APPLICATION-database-ihm
+    image: adminer:4.8.1-standalone
+    restart: always
+    ports:
+      - PORT_DB_APPLICATION:8080
+    networks:
+      - NOM_APPLICATION-network
+    depends_on:
+      - NOM_APPLICATION-database
+  NOM_APPLICATION-cache:
+    container_name: NOM_APPLICATION-cache
+    restart: always
+    image: redis:6
+    networks:
+      - NOM_APPLICATION-network
+  NOM_APPLICATION-backoffice:
+    container_name: NOM_APPLICATION-backoffice
+    image: directus/directus:9.21.0
+    restart: always
+    ports:
+      - PORT_APPLICATION:8055
+    volumes:
+      - NOM_APPLICATION-backoffice-uploads:/directus/uploads
+      - NOM_APPLICATION-backoffice-extensions:/directus/extensions
+    networks:
+      - NOM_APPLICATION-network
+    depends_on:
+      - NOM_APPLICATION-cache
+      - NOM_APPLICATION-database
+    environment:
+      LOG_LEVEL: info
+      CORS_ORIGIN: true
+      CORS_ENABLED: true
+      PUBLIC_URL: https://NOM_APPLICATION.chillo.fr
+      KEY: NOM_APPLICATION_ihmC69B8E7C437A4E6E16B7A35ACF2C3
+      SECRET: NOM_APPLICATION_ihm
+      DB_CLIENT: pg
+      DB_HOST: NOM_APPLICATION-database
+      DB_DATABASE: NOM_APPLICATION
 
-networks:
-  NOM_APPLICATION:
-    name: NOM_APPLICATION
-    external: true
+      DB_USER: NOM_APPLICATION-user
+      DB_PASSWORD: NOM_APPLICATION-pwd
+
+      CACHE_ENABLED: false
+      CACHE_STORE: redis
+      CACHE_REDIS: redis://NOM_APPLICATION-cache
+
+      ADMIN_EMAIL: admin@NOM_APPLICATION.com
+      ADMIN_PASSWORD: NOM_APPLICATION-P@ssw1rd
+
+      EMAIL_FROM: no-reply@NOM_APPLICATION.com
 
 volumes:
-  NOM_APPLICATION-configs:
-  NOM_APPLICATION-uploads:
+  NOM_APPLICATION-database:
+  NOM_APPLICATION-backoffice:
+  NOM_APPLICATION-backoffice-config:
+  NOM_APPLICATION-backoffice-src:
+  NOM_APPLICATION-backoffice-uploads:
+  NOM_APPLICATION-backoffice-extensions:
+networks:
+  NOM_APPLICATION-network:
+    external: true
